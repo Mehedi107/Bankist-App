@@ -1,9 +1,5 @@
 'use strict';
 
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// BANKIST APP
-
 // Data
 const account1 = {
   owner: 'Jonas Schmedtmann',
@@ -61,16 +57,20 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-/////////////////////////////////////////////////
-/////////////////////////////////////////////////
-// LECTURES
+// Display UI
 
-const currencies = new Map([
-  ['USD', 'United States dollar'],
-  ['EUR', 'Euro'],
-  ['GBP', 'Pound sterling'],
-]);
+const displayTransaction = function (transaction) {
+  containerMovements.innerHTML = '';
 
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
-
-/////////////////////////////////////////////////
+  transaction.forEach((amount, index) => {
+    const html = `
+        <div class="movements__row">
+            <div class="movements__type movements__type--${amount > 0 ? 'deposit' : 'withdrawal'}">${index + 1} deposit</div>
+            <div class="movements__date">3 days ago</div>
+            <div class="movements__value"> $${amount}</div>
+        </div>
+    `;
+    containerMovements.insertAdjacentHTML('afterbegin', html);
+  });
+};
+displayTransaction(account1.movements);
