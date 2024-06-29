@@ -58,7 +58,6 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 // Display UI
-
 const displayTransaction = function (transaction) {
   containerMovements.innerHTML = '';
 
@@ -74,3 +73,16 @@ const displayTransaction = function (transaction) {
   });
 };
 displayTransaction(account1.movements);
+
+// Create user name
+const createUserName = function (accs) {
+  accs.forEach(acc => {
+    acc.userName = acc.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+};
+createUserName(accounts);
+console.log(accounts);
