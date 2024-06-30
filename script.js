@@ -57,13 +57,12 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const currentBalance = function (user) {
-  const balance = user.movements.reduce((acc, cur) => acc + cur, 0);
+const currentBalance = function (acc) {
+  const balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
   labelBalance.textContent = `$${balance}`;
 };
-currentBalance(account1);
 
-const displayTransaction = function (transaction) {
+const displayStatements = function (transaction) {
   containerMovements.innerHTML = '';
 
   transaction.forEach((amount, index) => {
@@ -77,7 +76,6 @@ const displayTransaction = function (transaction) {
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
-displayTransaction(account1.movements);
 
 const displayAmountSummery = function (amount) {
   const income = amount.filter(value => value > 0).reduce((acc, cur) => acc + cur);
@@ -91,9 +89,8 @@ const displayAmountSummery = function (amount) {
     .map(value => (value * 1.2) / 100)
     .filter(int => int >= 1)
     .reduce((acc, cur) => acc + cur);
-  labelSumInterest.textContent = interest;
+  labelSumInterest.textContent = Math.trunc(interest);
 };
-displayAmountSummery(account1.movements);
 
 const createUserName = function (accs) {
   accs.forEach(acc => {
@@ -105,3 +102,27 @@ const createUserName = function (accs) {
   });
 };
 createUserName(accounts);
+
+let currentUser;
+
+btnLogin.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  currentUser = accounts.filter(acc => acc.userName === inputLoginUsername.value)[0];
+  console.log(currentUser);
+
+  labelWelcome.textContent = `Welcome ${currentUser.owner.split(' ')[0]}`;
+
+  if (currentUser.pin === Number(inputLoginPin.value)) {
+    containerApp.style.opacity = 100;
+
+    currentBalance(currentUser);
+    displayStatements(currentUser.movements);
+    displayAmountSummery(currentUser.movements);
+  }
+
+  // Clear input fields
+  inputLoginUsername.value = inputLoginPin.value = '';
+  inputLoginUsername.blur();
+  inputLoginPin.blur();
+});
