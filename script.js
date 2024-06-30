@@ -57,6 +57,12 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+const currentBalance = function (user) {
+  const balance = user.movements.reduce((acc, cur) => acc + cur, 0);
+  labelBalance.textContent = `$${balance}`;
+};
+currentBalance(account1);
+
 const displayTransaction = function (transaction) {
   containerMovements.innerHTML = '';
 
@@ -65,13 +71,29 @@ const displayTransaction = function (transaction) {
         <div class="movements__row">
             <div class="movements__type movements__type--${amount > 0 ? 'deposit' : 'withdrawal'}">${index + 1} deposit</div>
             <div class="movements__date">3 days ago</div>
-            <div class="movements__value"> $${amount}</div>
+            <div class="movements__value"> $${Math.abs(amount)}</div>
         </div>
     `;
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
 displayTransaction(account1.movements);
+
+const displayAmountSummery = function (amount) {
+  const income = amount.filter(value => value > 0).reduce((acc, cur) => acc + cur);
+  labelSumIn.textContent = income;
+
+  const outcome = amount.filter(value => value < 0).reduce((acc, cur) => acc + cur);
+  labelSumOut.textContent = Math.abs(outcome);
+
+  const interest = amount
+    .filter(value => value > 0)
+    .map(value => (value * 1.2) / 100)
+    .filter(int => int >= 1)
+    .reduce((acc, cur) => acc + cur);
+  labelSumInterest.textContent = interest;
+};
+displayAmountSummery(account1.movements);
 
 const createUserName = function (accs) {
   accs.forEach(acc => {
@@ -83,11 +105,3 @@ const createUserName = function (accs) {
   });
 };
 createUserName(accounts);
-
-const currentBalance = function (user) {
-  const balance = user.movements.reduce((acc, cur) => acc + cur, 0);
-
-  labelBalance.textContent = `$${balance}`;
-};
-
-currentBalance(account1);
