@@ -57,7 +57,6 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-// Display UI
 const displayTransaction = function (transaction) {
   containerMovements.innerHTML = '';
 
@@ -74,7 +73,6 @@ const displayTransaction = function (transaction) {
 };
 displayTransaction(account1.movements);
 
-// Create user name
 const createUserName = function (accs) {
   accs.forEach(acc => {
     acc.userName = acc.owner
@@ -85,4 +83,11 @@ const createUserName = function (accs) {
   });
 };
 createUserName(accounts);
-console.log(accounts);
+
+const currentBalance = function (user) {
+  const balance = user.movements.reduce((acc, cur) => acc + cur, 0);
+
+  labelBalance.textContent = `$${balance}`;
+};
+
+currentBalance(account1);
