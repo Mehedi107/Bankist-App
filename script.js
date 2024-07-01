@@ -58,8 +58,8 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 const currentBalance = function (acc) {
-  const balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
-  labelBalance.textContent = `$${balance}`;
+  acc.balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
+  labelBalance.textContent = `$${acc.balance}`;
 };
 
 const displayStatements = function (transaction) {
@@ -78,17 +78,17 @@ const displayStatements = function (transaction) {
 };
 
 const displayAmountSummery = function (amount) {
-  const income = amount.filter(value => value > 0).reduce((acc, cur) => acc + cur);
+  const income = amount.filter(value => value > 0).reduce((acc, cur) => acc + cur, 0);
   labelSumIn.textContent = income;
 
-  const outcome = amount.filter(value => value < 0).reduce((acc, cur) => acc + cur);
+  const outcome = amount.filter(value => value < 0).reduce((acc, cur) => acc + cur, 0);
   labelSumOut.textContent = Math.abs(outcome);
 
   const interest = amount
     .filter(value => value > 0)
     .map(value => (value * 1.2) / 100)
     .filter(int => int >= 1)
-    .reduce((acc, cur) => acc + cur);
+    .reduce((acc, cur) => acc + cur, 0);
   labelSumInterest.textContent = Math.trunc(interest);
 };
 
@@ -103,26 +103,51 @@ const createUserName = function (accs) {
 };
 createUserName(accounts);
 
-let currentUser;
+// Update UI functionality
+const updateUI = function (acc) {
+  currentBalance(acc);
+  displayStatements(acc.movements);
+  displayAmountSummery(acc.movements);
+};
 
+// Clear input fields functionality
+const clearInputFields = function (p1, p2) {
+  p1.value = p2.value = '';
+  p1.blur();
+  p2.blur();
+};
+
+let currentUser;
+// Login functionality
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
 
   currentUser = accounts.filter(acc => acc.userName === inputLoginUsername.value)[0];
-  console.log(currentUser);
 
   labelWelcome.textContent = `Welcome ${currentUser.owner.split(' ')[0]}`;
 
   if (currentUser.pin === Number(inputLoginPin.value)) {
     containerApp.style.opacity = 100;
-
-    currentBalance(currentUser);
-    displayStatements(currentUser.movements);
-    displayAmountSummery(currentUser.movements);
+    updateUI(currentUser);
   }
 
-  // Clear input fields
-  inputLoginUsername.value = inputLoginPin.value = '';
-  inputLoginUsername.blur();
-  inputLoginPin.blur();
+  console.log(inputLoginUsername.value, inputLoginPin.value);
+  clearInputFields(inputLoginUsername, inputLoginPin);
+  console.log(inputLoginUsername.value, inputLoginPin.value);
+});
+
+// Transfer money functionality
+btnTransfer.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.filter(acc => acc.userName === inputTransferTo.value)[0];
+
+  if (amount > 0 && receiverAcc && currentUser.balance >= amount && receiverAcc?.userName !== currentUser.userName) {
+    receiverAcc.movements.push(amount);
+    currentUser.movements.push(-amount);
+
+    updateUI(currentUser);
+    clearInputFields(inputTransferTo, inputTransferAmount);
+  }
 });
