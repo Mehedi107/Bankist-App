@@ -124,9 +124,9 @@ btnLogin.addEventListener('click', function (e) {
 
   currentUser = accounts.filter(acc => acc.userName === inputLoginUsername.value)[0];
 
-  labelWelcome.textContent = `Welcome ${currentUser.owner.split(' ')[0]}`;
-
   if (currentUser.pin === Number(inputLoginPin.value)) {
+    labelWelcome.textContent = `Welcome ${currentUser.owner.split(' ')[0]}`;
+
     containerApp.style.opacity = 100;
     updateUI(currentUser);
   }
@@ -150,4 +150,27 @@ btnTransfer.addEventListener('click', function (e) {
     updateUI(currentUser);
     clearInputFields(inputTransferTo, inputTransferAmount);
   }
+});
+
+// Request loan functionality
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = inputLoanAmount.value;
+});
+
+// Delete account functionality
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  if (inputCloseUsername.value === currentUser.userName && Number(inputClosePin.value) === currentUser.pin) {
+    const index = accounts.findIndex(acc => inputCloseUsername.value === currentUser.userName);
+
+    // delete account
+    accounts.splice(index, 1);
+
+    // hide UI
+    containerApp.style.opacity = 0;
+  }
+  clearInputFields(inputCloseUsername, inputClosePin);
 });
