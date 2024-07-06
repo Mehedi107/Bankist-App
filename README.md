@@ -6,7 +6,10 @@ A simple banking transaction site.
 
 ## Accounts details for login
 
-1. Jonas Schmedtmann -**user-name:** js -**pin:** 1111
+1. Jonas Schmedtmann
+
+- **user-name:** js
+- **pin:** 1111
 
 2. Jessica Davis
    **user-name:** jd
