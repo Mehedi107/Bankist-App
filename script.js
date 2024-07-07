@@ -57,6 +57,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+// Functions
 const currentBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
   labelBalance.textContent = `$${acc.balance}`;
@@ -103,21 +104,21 @@ const createUserName = function (accs) {
 };
 createUserName(accounts);
 
-// Update UI functionality
 const updateUI = function (acc) {
   currentBalance(acc);
   displayStatements(acc.movements);
   displayAmountSummery(acc.movements);
 };
 
-// Clear input fields functionality
 const clearInputFields = function (p1, p2) {
   p1.value = p2.value = '';
   p1.blur();
   p2.blur();
 };
 
+// Event handlers
 let currentUser;
+
 // Login functionality
 btnLogin.addEventListener('click', function (e) {
   e.preventDefault();
@@ -131,9 +132,7 @@ btnLogin.addEventListener('click', function (e) {
     updateUI(currentUser);
   }
 
-  console.log(inputLoginUsername.value, inputLoginPin.value);
   clearInputFields(inputLoginUsername, inputLoginPin);
-  console.log(inputLoginUsername.value, inputLoginPin.value);
 });
 
 // Transfer money functionality
@@ -156,7 +155,12 @@ btnTransfer.addEventListener('click', function (e) {
 btnLoan.addEventListener('click', function (e) {
   e.preventDefault();
 
-  const amount = inputLoanAmount.value;
+  const amount = Number(inputLoanAmount.value);
+
+  if (amount > 0 && amount <= 5000) {
+    currentUser.movements.push(amount);
+    updateUI(currentUser);
+  }
 });
 
 // Delete account functionality
