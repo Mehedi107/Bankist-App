@@ -63,10 +63,13 @@ const currentBalance = function (acc) {
   labelBalance.textContent = `$${acc.balance}`;
 };
 
-const displayStatements = function (transaction) {
+const displayStatements = function (transaction, sort = false) {
   containerMovements.innerHTML = '';
 
-  transaction.forEach((amount, index) => {
+  // Sorting
+  const movs = sort ? transaction.slice().sort((a, b) => a - b) : transaction;
+
+  movs.forEach((amount, index) => {
     const html = `
         <div class="movements__row">
             <div class="movements__type movements__type--${amount > 0 ? 'deposit' : 'withdrawal'}">${index + 1} deposit</div>
@@ -177,4 +180,13 @@ btnClose.addEventListener('click', function (e) {
     containerApp.style.opacity = 0;
   }
   clearInputFields(inputCloseUsername, inputClosePin);
+});
+
+// Sorting functionality
+let sorted = false;
+btnSort.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  displayStatements(currentUser.movements, !sorted);
+  sorted = !sorted;
 });
