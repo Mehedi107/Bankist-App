@@ -1,12 +1,13 @@
 'use strict';
 
+/////////////////////////////////////////////////////////
 // Data
 const account1 = {
   owner: 'Jonas Schmedtmann',
   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
   interestRate: 1.2, // %
   pin: 1111,
-  movementsDates: ['2019-11-01T13:15:33.035Z', '2019-11-30T09:48:16.867Z', '2019-12-25T06:04:23.907Z', '2020-01-25T14:18:46.235Z', '2020-02-05T16:33:06.386Z', '2020-04-10T14:43:26.374Z', '2020-06-25T18:49:59.371Z', '2020-07-26T12:01:20.894Z'],
+  movementsDates: ['2019-11-01T13:15:33.035Z', '2019-11-30T09:48:16.867Z', '2019-12-25T06:04:23.907Z', '2020-01-25T14:18:46.235Z', '2020-02-05T16:33:06.386Z', '2020-04-10T14:43:26.374Z', '2024-07-20T18:49:59.371Z', '2024-07-23T12:01:20.894Z'],
   currency: 'USD',
   locale: 'en-US',
 };
@@ -37,6 +38,7 @@ const account4 = {
 
 const accounts = [account1, account2, account3, account4];
 
+/////////////////////////////////////////////////////////
 // Elements
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
@@ -63,7 +65,23 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+/////////////////////////////////////////////////////////
 // Functions
+
+const formatMovementDate = function (date) {
+  const calcDaysPassed = (date1, date2) => Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+  const daysPassed = calcDaysPassed(new Date(), date);
+
+  if (daysPassed === 0) return `Today`;
+  if (daysPassed === 1) return `Yesterday`;
+  if (daysPassed <= 7) return `${daysPassed} days ago`;
+
+  const d = String(date.getDate()).padStart(2, '0');
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const y = `${date.getFullYear()}`;
+  return `${d}/${m}/${y}`;
+};
+
 const currentBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, cur) => acc + cur, 0);
   labelBalance.textContent = `$${acc.balance.toFixed(2)}`;
@@ -77,14 +95,12 @@ const displayStatements = function (acc, sort = false) {
 
   movs.forEach((amount, i) => {
     const date = new Date(acc.movementsDates[i]);
-    const d = String(date.getDate()).padStart(2, '0');
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const y = `${date.getFullYear()}`;
+    const displayDate = formatMovementDate(date);
 
     const html = `
         <div class="movements__row">
             <div class="movements__type movements__type--${amount > 0 ? 'deposit' : 'withdrawal'}">${i + 1} deposit</div>
-            <div class="movements__date">${d}/${m}/${y}</div>
+            <div class="movements__date">${displayDate}</div>
             <div class="movements__value"> $${Math.abs(amount).toFixed(2)}</div>
         </div>
     `;
@@ -216,6 +232,6 @@ let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
 
-  displayStatements(currentUser.movements, !sorted);
+  displayStatements(currentUser, !sorted);
   sorted = !sorted;
 });
