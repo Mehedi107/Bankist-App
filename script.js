@@ -68,7 +68,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 /////////////////////////////////////////////////////////
 // Functions
 
-const formatMovementDate = function (date) {
+const formatMovementDate = function (date, locale) {
   const calcDaysPassed = (date1, date2) => Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
   const daysPassed = calcDaysPassed(new Date(), date);
 
@@ -76,10 +76,7 @@ const formatMovementDate = function (date) {
   if (daysPassed === 1) return `Yesterday`;
   if (daysPassed <= 7) return `${daysPassed} days ago`;
 
-  const d = String(date.getDate()).padStart(2, '0');
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const y = `${date.getFullYear()}`;
-  return `${d}/${m}/${y}`;
+  return new Intl.DateTimeFormat(locale).format(date);
 };
 
 const currentBalance = function (acc) {
@@ -95,7 +92,7 @@ const displayStatements = function (acc, sort = false) {
 
   movs.forEach((amount, i) => {
     const date = new Date(acc.movementsDates[i]);
-    const displayDate = formatMovementDate(date);
+    const displayDate = formatMovementDate(date, acc.locale);
 
     const html = `
         <div class="movements__row">
@@ -141,10 +138,14 @@ const updateUI = function (acc) {
 
   // Update date
   const now = new Date();
-  const date = String(now.getDate()).padStart(2, '0');
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const year = `${now.getFullYear()}`;
-  labelDate.textContent = `${date}/${month}/${year}`;
+  const option = {
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  };
+  labelDate.textContent = new Intl.DateTimeFormat(acc.locale, option).format(now);
 };
 
 const clearInputFields = function (p1, p2) {
