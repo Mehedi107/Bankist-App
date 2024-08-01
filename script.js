@@ -163,13 +163,40 @@ const clearInputFields = function (p1, p2) {
   p2.blur();
 };
 
+const startLogOutTimer = function () {
+  let time = 6000;
+
+  const tick = function () {
+    const min = String(Math.floor(time / 60)).padStart(2, '0');
+    const sec = String(time % 60).padStart(2, '0');
+
+    // Print to display
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      containerApp.style.opacity = 0;
+      labelWelcome.textContent = 'Log in to get started';
+    }
+
+    // Reduce time by 1 sec
+    time--;
+  };
+  tick();
+
+  // Timer
+  const timer = setInterval(tick, 1000);
+
+  return timer;
+};
+
 // Event handlers
-let currentUser;
+let currentUser, timer;
 
 // fake logged-in
-currentUser = account1;
-updateUI(currentUser);
-containerApp.style.opacity = 100;
+// currentUser = account1;
+// updateUI(currentUser);
+// containerApp.style.opacity = 100;
 
 // Login functionality
 btnLogin.addEventListener('click', function (e) {
@@ -182,6 +209,10 @@ btnLogin.addEventListener('click', function (e) {
 
     containerApp.style.opacity = 100;
     updateUI(currentUser);
+
+    // check for timer
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
   }
 
   clearInputFields(inputLoginUsername, inputLoginPin);
