@@ -164,7 +164,7 @@ const clearInputFields = function (p1, p2) {
 };
 
 const startLogOutTimer = function () {
-  let time = 6000;
+  let time = 600;
 
   const tick = function () {
     const min = String(Math.floor(time / 60)).padStart(2, '0');
@@ -192,11 +192,6 @@ const startLogOutTimer = function () {
 
 // Event handlers
 let currentUser, timer;
-
-// fake logged-in
-// currentUser = account1;
-// updateUI(currentUser);
-// containerApp.style.opacity = 100;
 
 // Login functionality
 btnLogin.addEventListener('click', function (e) {
